@@ -1,48 +1,58 @@
-// import logo from './logo.svg';
+import React, { useState } from 'react';
+
+import CourseGoalList from './components/CourseGoals/CourseGoalList/CourseGoalList';
+import CourseInput from './components/CourseGoals/CourseInput/CourseInput';
 import './App.css';
-import ExpenseItem from './components/ExpenseItem';
+import {v4 as uuidv4} from 'uuid';
 
-function App() {
-  const expenses = [
-    { id: 'e1',
-     title: 'Toilet Paper', 
-     amount: 94.12, 
-     date: new Date(2020, 7, 14)
-    },
+const App = () => {
+  const [courseGoals, setCourseGoals] = useState([
+    { text: 'Do all exercises!', id: uuidv4() },
+    { text: 'Finish the course!', id: uuidv4() }
+  ]);
 
-    { id: 'e2', title: 'New TV', amount: 799.49, date: new Date(2021, 2, 12)},
-    { id: 'e3', title: 'Car Insurance', amount: 294.67, date: new Date(2021, 2, 28)},
-    { id: 'e4', title: 'New Desk (Wooden)', amount: 294.67, date: new Date(2021, 5, 12)},
-  ]
+  const addGoalHandler = enteredText => {
+    setCourseGoals(prevGoals => {
+      const updatedGoals = [...prevGoals];
+      updatedGoals.unshift({ text: enteredText, id: uuidv4()});
+      return updatedGoals;
+    });
+  };
 
+  const deleteItemHandler = goalId => {
+    setCourseGoals(prevGoals => {
+      const updatedGoals = prevGoals.filter(goal => goal.id !== goalId);
+      return updatedGoals;
+    });
+  };
 
+  let content = (
+    <p style={{ textAlign: 'center' }}>No goals found. Maybe add one?</p>
+  );
 
+  if (courseGoals.length > 0) {
+    content = (
+      <CourseGoalList items={courseGoals} onDeleteItem={deleteItemHandler} />
+    );
+  }
 
   return (
     <div>
-      <h1>Let's Get Started</h1>
-      <ExpenseItem 
-      title={expenses[0].title}
-      amount={expenses[0].amount}
-      date={expenses[0].date}
-      ></ExpenseItem>
-      <ExpenseItem>
-      title={expenses[1].title}
-      amount={expenses[1].amount}
-      date={expenses[1].date}
-      </ExpenseItem>
-      <ExpenseItem>
-      title={expenses[2].title}
-      amount={expenses[2].amount}
-      date={expenses[2].date}
-      </ExpenseItem>
-      <ExpenseItem>
-      title={expenses[3].title}
-      amount={expenses[3].amount}
-      date={expenses[3].date}
-      </ExpenseItem>
+      <section id="goal-form">
+        <CourseInput onAddGoal={addGoalHandler} />
+      </section>
+      <section id="goals">
+        {content}
+        {/* {courseGoals.length > 0 && (
+          <CourseGoalList
+            items={courseGoals}
+            onDeleteItem={deleteItemHandler}
+          />
+        ) // <p style={{ textAlign: 'center' }}>No goals found. Maybe add one?</p>
+        } */}
+      </section>
     </div>
   );
-}
+};
 
 export default App;

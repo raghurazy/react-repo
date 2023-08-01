@@ -1,47 +1,39 @@
-// import logo from './logo.svg';
-import './App.css';
-import ExpenseItem from './components/ExpenseItem';
+import React, { useState, useEffect } from "react";
+
+import Login from "./components/Login/Login";
+import Home from "./components/Home/Home";
+import MainHeader from "./components/MainHeader/MainHeader";
 
 function App() {
-  const expenses = [
-    { id: 'e1',
-     title: 'Toilet Paper', 
-     amount: 94.12, 
-     date: new Date(2020, 7, 14)
-    },
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    { id: 'e2', title: 'New TV', amount: 799.49, date: new Date(2021, 2, 12)},
-    { id: 'e3', title: 'Car Insurance', amount: 294.67, date: new Date(2021, 2, 28)},
-    { id: 'e4', title: 'New Desk (Wooden)', amount: 294.67, date: new Date(2021, 5, 12)},
-  ]
+  // Here we are trying to find the user is still loggedin or not
+  // that's why we are using useEffect
+  useEffect(() => {
+    const getData = localStorage.getItem("isLoggedIn");
+    if (getData === "1") setIsLoggedIn(true);
+  }, [isLoggedIn]);
 
+  const loginHandler = (email, college_name, password) => { 
+    // we are passing 1 for the login
+    localStorage.setItem("isLoggedIn", '1');
+    setIsLoggedIn(true);
+  };
 
-
+  const logoutHandler = () => {
+    // we are passing 0 for the logout
+    localStorage.setItem("isLoggedIn", '0');
+    setIsLoggedIn(false);
+  };
 
   return (
-    <div>
-      <h1>Let's Get Started</h1>
-      <ExpenseItem 
-      title={expenses[0].title}
-      amount={expenses[0].amount}
-      date={expenses[0].date}
-      ></ExpenseItem>
-      <ExpenseItem>
-      title={expenses[1].title}
-      amount={expenses[1].amount}
-      date={expenses[1].date}
-      </ExpenseItem>
-      <ExpenseItem>
-      title={expenses[2].title}
-      amount={expenses[2].amount}
-      date={expenses[2].date}
-      </ExpenseItem>
-      <ExpenseItem>
-      title={expenses[3].title}
-      amount={expenses[3].amount}
-      date={expenses[3].date}
-      </ExpenseItem>
-    </div>
+    <React.Fragment>
+      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+      <main>
+        {!isLoggedIn && <Login onLogin={loginHandler} />}
+        {isLoggedIn && <Home onLogout={logoutHandler} />}
+      </main>
+    </React.Fragment>
   );
 }
 
